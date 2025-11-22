@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Weatherify</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    {% if not hide_nav %}
+    <header class="navbar">
+      <a href="{{ url_for('index') }}" class="brand">Weatherify</a>
+    </header>
+    {% endif %}
+
+    <div class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-wrap">
+        {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </div>
+
+    {% if not hide_nav %}
+    <footer class="footer-logout">
+      <a href="{{ url_for('logout') }}" class="nav-logout"
+        ><i class="fa-solid fa-arrow-right-from-bracket"></i
+      ></a>
+    </footer>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

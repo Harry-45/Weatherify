@@ -1,0 +1,169 @@
+{% extends "base.html" %} {% block content %}
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+  </div>
+
+  <!-- Users Section -->
+  <div class="admin-section">
+    <div class="section-header">
+      <h2>👥 User Management</h2>
+      <span class="user-count">{{ users|length }} users</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="admin-table users-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Admin</th>
+            <th>Last Activity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td class="user-id">{{ u.id }}</td>
+            <td class="user-name">{{ u.name or '-' }}</td>
+            <td class="user-email">{{ u.email }}</td>
+            <td>
+              <span
+                class="badge {% if u.is_admin %}admin-badge{% else %}user-badge{% endif %}"
+              >
+                {{ 'Admin' if u.is_admin else 'User' }}
+              </span>
+            </td>
+            <td class="last-activity">
+              {% if last_activity[u.id] %} {{
+              last_activity[u.id].strftime('%Y-%m-%d %H:%M') }} {% else %}
+              <span class="text-muted">Never</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if not u.is_admin %}
+              <button
+                class="admin-delete-user btn-delete"
+                data-id="{{ u.id }}"
+                title="Delete user"
+              >
+                ×
+              </button>
+              {% else %}
+              <span class="text-muted">Protected</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add/Update Mapping Section -->
+  <div class="admin-section">
+    <div class="section-header">
+      <h2>➕ Add/Update Weather Mapping</h2>
+    </div>
+    <form method="post" class="mapping-form">
+      <div class="form-group">
+        <input
+          name="weather"
+          placeholder="Weather (Clear, Rain, Clouds, Snow, Thunderstorm)"
+          required
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          name="language"
+          placeholder="Language (English, Hindi)"
+          required
+          class="form-input"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          name="playlist_id"
+          placeholder="Spotify Playlist ID"
+          required
+          class="form-input"
+        />
+      </div>
+      <button type="submit" class="btn-primary">Save Mapping</button>
+    </form>
+  </div>
+
+  <!-- Mappings Section -->
+  <div class="admin-section">
+    <div class="section-header">
+      <h2>🎵 Weather-Playlist Mappings</h2>
+      <span class="mapping-count">{{ mappings|length }} mappings</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="admin-table mappings-table">
+        <thead>
+          <tr>
+            <th>Weather</th>
+            <th>Language</th>
+            <th>Playlist ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in mappings %}
+          <tr>
+            <td class="weather-type">{{ m.weather }}</td>
+            <td class="language-type">{{ m.language }}</td>
+            <td class="playlist-id-cell">{{ m.playlist_id }}</td>
+            <td>
+              <button
+                class="admin-delete-mapping btn-delete"
+                data-id="{{ m.id }}"
+                title="Delete mapping"
+              >
+                ×
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Searches Section -->
+  <div class="admin-section">
+    <div class="section-header">
+      <h2>📊 Recent Searches</h2>
+      <span class="log-count">{{ logs|length }} searches</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="admin-table logs-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>City</th>
+            <th>Weather</th>
+            <th>Playlist ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for l in logs %}
+          <tr>
+            <td class="timestamp">
+              {{ l.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+            </td>
+            <td class="city-name">{{ l.city }}</td>
+            <td class="weather-condition">{{ l.weather }}</td>
+            <td class="log-playlist-id">{{ l.playlist_id }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

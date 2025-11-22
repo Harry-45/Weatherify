@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+  <img src="{{ url_for('static', filename='logo.png') }}" class="logo small-logo" alt="Weatherify Logo">
+  <h1>Your Weatherify Playlist</h1>
+
+  <div class="weather-box">
+    <h2>Weather in {{ weather_data.city }}</h2>
+    <p class="temp">Temperature: {{ weather_data.temperature }}°C</p>
+    <img src="http://openweathermap.org/img/wn/{{ weather_data.icon }}@2x.png" class="weather-icon"><br>
+    <p class="condition">Condition: {{ weather_data.condition }}</p>
+    <p class="vibe">{{ weather_data.vibe }}</p>
+  </div>
+
+  {% if playlist %}
+    <div class="playlist-section">
+      {% if playlist.image %}
+        <img src="{{ playlist.image }}" class="playlist-cover" alt="cover">
+      {% endif %}
+      <h3><a href="{{ playlist.url }}" target="_blank">{{ playlist.name }}</a></h3>
+      <p class="desc">{{ playlist.description }}</p>
+
+      {% if tracks %}
+        <div class="track-list">
+          {% for t in tracks %}
+            <div class="track-card">
+              {% if t.image %}
+                <img src="{{ t.image }}" class="track-cover">
+              {% endif %}
+              <div class="track-info">
+                <p class="track-name">{{ t.name }}</p>
+                <p class="track-artist">{{ t.artist }}</p>
+                {% if t.preview_url %}
+                  <audio controls preload="none">
+                    <source src="{{ t.preview_url }}" type="audio/mpeg">
+                  </audio>
+                {% else %}
+                  <p class="no-preview">No preview available</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>No playlist found for this weather and language.</p>
+  {% endif %}
+  <p style="margin-top:20px"><a href="{{ url_for('index') }}" class="link-btn">Back</a></p>
+{% endblock %}
