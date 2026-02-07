@@ -1,44 +1,62 @@
 {% extends "base.html" %} {% block content %}
 <section class="landing">
-  <header>
-    <img
-      src="{{ url_for('static', filename='logo.png') }}"
-      alt="Weatherify Logo"
-      class="logo"
-    />
-    <h1>Welcome to Weatherify</h1>
-    <p class="subtitle">
-      Experience music that matches your mood and weather 🎶
-    </p>
-  </header>
 
-  <div class="auth-row">
-    {% if user %}
-    <span class="welcome">Hello, {{ user.name }}</span>
-    <div class="auth-buttons">
-      <a href="{{ url_for('logout') }}" class="link-btn">Logout</a>
-      <a href="{{ url_for('spotify_login') }}" class="link-btn"
-        >Connect Spotify</a
-      >
-    {% endif %}
+  <div class="music-icon-box">
+    <i class="fa-solid fa-music music-icon"></i>
   </div>
 
-  <div class="main-container">
-    <form action="{{ url_for('search_city') }}" method="post" class="main-form">
-      <label for="city">Enter City:</label>
-      <input type="text" name="city" id="city" placeholder="Enter your city" />
+  <h1 class="hero-title">
+    Your mood, synced<br>
+    with <span class="hero-highlight">the sky.</span>
+  </h1>
 
-      <label for="language">Select Language:</label>
-      <select id="language" name="language">
-        <option>English</option>
-        <option>Hindi</option>
-      </select>
+  <p class="hero-subtitle">
+    Experience music that perfectly matches your current weather conditions.
+    Whether it's a rainy jazz afternoon or a sun-drenched pop beat.
+  </p>
 
-      <div class="form-actions">
-        <button type="submit">Get Weather & Music</button>
-        <button type="button" id="useLocation">Use My Current Location</button>
+  <div class="search-card">
+    <form action="{{ url_for('search_city') }}" method="post">
+      <div class="form-group">
+        <label class="form-label">LOCATION</label>
+        <div style="position: relative;">
+          <input type="text" name="city" id="city" class="form-input" placeholder="Enter your city..."
+            style="padding-left: 40px;">
+          <i class="fa-solid fa-location-dot"
+            style="position: absolute; left: 15px; top: 18px; color: var(--text-dim);"></i>
+        </div>
       </div>
+
+      <div class="form-group">
+        <label class="form-label">LANGUAGE</label>
+        <div style="position: relative;">
+          <select id="language" name="language" class="form-select" style="padding-left: 40px;">
+            <option>English</option>
+            <option>Hindi</option>
+          </select>
+          <i class="fa-solid fa-language"
+            style="position: absolute; left: 15px; top: 18px; color: var(--text-dim);"></i>
+          <i class="fa-solid fa-chevron-down"
+            style="position: absolute; right: 15px; top: 18px; color: var(--text-dim); pointer-events: none;"></i>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        <i class="fa-solid fa-bolt"></i> Get Weather & Music
+      </button>
+
+      <button type="button" id="useLocation" class="btn-secondary">
+        <i class="fa-solid fa-crosshairs"></i> Use current location
+      </button>
     </form>
   </div>
+
+  <div class="footer-icons">
+    <i class="fa-solid fa-cloud"></i>
+    <i class="fa-regular fa-sun"></i>
+    <i class="fa-solid fa-droplet"></i>
+    <i class="fa-solid fa-wind"></i>
+  </div>
+
 </section>
 {% endblock %}

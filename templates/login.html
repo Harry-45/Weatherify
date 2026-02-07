@@ -1,21 +1,33 @@
-{% set hide_nav = true %} {% extends "base.html" %} {% block content %}
-<div class="main-container">
-  <div class="auth-card">
-    <h2>Login</h2>
+{% set hide_nav = true %}
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+  <div class="search-card auth-box">
+    <div style="margin-bottom: 20px;">
+      <i class="fa-solid fa-cloud-moon" style="font-size: 3rem; color: var(--primary-green);"></i>
+    </div>
+    <h2 style="margin-bottom: 10px;">Welcome Back</h2>
+    <p style="color: var(--text-dim); margin-bottom: 30px;">Login to continue to Weatherify</p>
 
-    <form id="loginForm" method="post" action="{{ url_for('login') }}">
-      <input name="email" type="email" placeholder="Email" required />
-      <input name="password" type="password" placeholder="Password" required />
-      <button type="submit">Login</button>
+    <form action="{{ url_for('login') }}" method="post">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" placeholder="name@example.com" required class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" placeholder="••••••••" required class="form-input" />
+      </div>
+
+      <button type="submit" class="btn-primary">Login</button>
     </form>
 
-    <p style="margin-top: 12px">
-      Don't have an account?
-      <a href="{{ url_for('signup') }}">Sign up</a>
+    <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-dim);">
+      Don't have an account? <a href="{{ url_for('signup') }}" style="color: var(--primary-green);">Sign up</a>
     </p>
-
-    <p style="margin-top: 8px; font-size: 0.95rem">
-      Admin? <a href="{{ url_for('admin_login') }}">Admin Login</a>
+    <p style="margin-top: 10px; font-size: 0.8rem;">
+      <a href="{{ url_for('admin_login') }}" style="color: #666;">Admin Login</a>
     </p>
   </div>
 </div>

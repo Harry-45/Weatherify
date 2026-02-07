@@ -13,34 +13,38 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
 
   <body>
     {% if not hide_nav %}
     <header class="navbar">
-      <a href="{{ url_for('index') }}" class="brand">Weatherify</a>
+      <a href="{{ url_for('index') }}" class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-music"></i></div>
+        Weatherify
+      </a>
+      
+      {% if session.get('user_id') %}
+      <div class="nav-right">
+        <a href="{{ url_for('search_city') }}" class="nav-link"><i class="fa-solid fa-search"></i></a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+             Logout <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+      </div>
+      {% endif %}
     </header>
     {% endif %}
 
-    <div class="container">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %}
-      <div class="flash-wrap">
-        {% for category, msg in messages %}
-        <div class="flash {{ category }}">{{ msg }}</div>
-        {% endfor %}
-      </div>
-      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-wrap" style="position: fixed; top: 80px; right: 20px; z-index: 9999;">
+      {% for category, msg in messages %}
+      <div class="flash {{ category }}" style="background: var(--primary-green); color: black; padding: 15px; border-radius: 8px; margin-bottom: 10px; font-weight: 600;">{{ msg }}</div>
+      {% endfor %}
     </div>
-
-    {% if not hide_nav %}
-    <footer class="footer-logout">
-      <a href="{{ url_for('logout') }}" class="nav-logout"
-        ><i class="fa-solid fa-arrow-right-from-bracket"></i
-      ></a>
-    </footer>
-    {% endif %}
+    {% endif %} {% endwith %} 
+    
+    {% block content %}{% endblock %}
 
     <script src="{{ url_for('static', filename='main.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>

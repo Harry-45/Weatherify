@@ -1,169 +1,219 @@
-{% extends "base.html" %} {% block content %}
-<div class="admin-container">
-  <div class="admin-header">
-    <h1>Admin Dashboard</h1>
-    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-  </div>
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-cloud"></i> Weatherify
+    </div>
 
-  <!-- Users Section -->
-  <div class="admin-section">
-    <div class="section-header">
-      <h2>👥 User Management</h2>
-      <span class="user-count">{{ users|length }} users</span>
-    </div>
-    <div class="table-wrapper">
-      <table class="admin-table users-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Admin</th>
-            <th>Last Activity</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for u in users %}
-          <tr>
-            <td class="user-id">{{ u.id }}</td>
-            <td class="user-name">{{ u.name or '-' }}</td>
-            <td class="user-email">{{ u.email }}</td>
-            <td>
-              <span
-                class="badge {% if u.is_admin %}admin-badge{% else %}user-badge{% endif %}"
-              >
-                {{ 'Admin' if u.is_admin else 'User' }}
-              </span>
-            </td>
-            <td class="last-activity">
-              {% if last_activity[u.id] %} {{
-              last_activity[u.id].strftime('%Y-%m-%d %H:%M') }} {% else %}
-              <span class="text-muted">Never</span>
-              {% endif %}
-            </td>
-            <td>
-              {% if not u.is_admin %}
-              <button
-                class="admin-delete-user btn-delete"
-                data-id="{{ u.id }}"
-                title="Delete user"
-              >
-                ×
-              </button>
-              {% else %}
-              <span class="text-muted">Protected</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <nav>
+      <div class="nav-item active">
+        <i class="fa-solid fa-table-columns"></i> Dashboard
+      </div>
+      <div class="nav-item">
+        <i class="fa-solid fa-users"></i> User Management
+      </div>
+      <div class="nav-item">
+        <i class="fa-solid fa-map"></i> Weather Mappings
+      </div>
+      <div class="nav-item">
+        <i class="fa-solid fa-music"></i> Playlists
+      </div>
+      <div class="nav-item">
+        <i class="fa-solid fa-gear"></i> Settings
+      </div>
+    </nav>
 
-  <!-- Add/Update Mapping Section -->
-  <div class="admin-section">
-    <div class="section-header">
-      <h2>➕ Add/Update Weather Mapping</h2>
+    <div style="margin-top: auto;">
+      <div class="nav-item">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div
+            style="width: 32px; height: 32px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div style="font-size: 0.9rem;">
+            <div>System Admin</div>
+            <div style="font-size: 0.7rem; color: #777;">admin@weatherify.com</div>
+          </div>
+          <a href="{{ url_for('logout') }}" style="margin-left: auto;"><i
+              class="fa-solid fa-arrow-right-from-bracket"></i></a>
+        </div>
+      </div>
     </div>
-    <form method="post" class="mapping-form">
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="admin-header">
+      <h1 style="font-size: 2rem; font-weight: 700;">Admin Dashboard</h1>
+      <div style="display: flex; gap: 15px;">
+        <button class="btn-secondary" style="width: auto; margin:0;" onclick="window.location.reload()"><i
+            class="fa-solid fa-rotate-right"></i> Refresh Data</button>
+        <button class="btn-success" onclick="document.getElementById('mappingModal').style.display='flex'">+ New
+          Mapping</button>
+      </div>
+    </div>
+
+    <!-- Stats and Mappings Grid -->
+    <div class="stats-grid">
+
+      <!-- User Management Table -->
+      <div class="card">
+        <div class="card-header">
+          <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem;">
+            <i class="fa-solid fa-users" style="color: var(--primary-green);"></i> User Management
+            <span class="mapping-pill">{{ users|length }} users</span>
+          </div>
+          <div class="form-group" style="margin: 0; width: 200px;">
+            <input type="text" placeholder="Search users..." class="form-input"
+              style="padding: 8px 12px; font-size: 0.9rem;">
+          </div>
+        </div>
+
+        <table class="table-dark">
+          <thead>
+            <tr>
+              <th>USER</th>
+              <th>ROLE</th>
+              <th>LAST ACTIVITY</th>
+              <th>STATUS</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div class="user-avatar {{ 'admin' if u.is_admin else '' }}">
+                    {{ u.name[0] if u.name else 'U' }}
+                  </div>
+                  <div>
+                    <div style="font-weight: 600;">{{ u.name or 'Unknown' }}</div>
+                    <div style="font-size: 0.8rem; color: #777;">{{ u.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {% if u.is_admin %}
+                <span class="mapping-pill"
+                  style="color: var(--primary-green); border: 1px solid var(--primary-green);">ADMIN</span>
+                {% else %}
+                <span class="mapping-pill" style="color: #bbb; border: 1px solid #444;">USER</span>
+                {% endif %}
+              </td>
+              <td style="color: #999;">
+                {% if last_activity[u.id] %} {{ last_activity[u.id].strftime('%Y-%m-%d %H:%M') }} {% else %} Never {%
+                endif %}
+              </td>
+              <td>
+                <span class="status-active">
+                  <div class="status-dot"></div> Active
+                </span>
+              </td>
+              <td>
+                {% if not u.is_admin %}
+                <i class="fa-regular fa-trash-can" style="cursor: pointer; color: #ff5252;"></i>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Right Column: Mappings & Insights -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="card">
+          <div class="card-header">
+            <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
+              <i class="fa-solid fa-music" style="color: var(--primary-green);"></i> Active Mappings
+              <span class="mapping-pill" style="color: var(--primary-green);">{{ mappings|length }} TOTAL</span>
+            </div>
+          </div>
+
+          <div style="max-height: 400px; overflow-y: auto;">
+            {% for m in mappings %}
+            <div class="mapping-card">
+              <div class="mapping-header">
+                <div style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                  {% if 'clear' in m.weather|lower %}<i class="fa-regular fa-sun" style="color: yellow;"></i>
+                  {% elif 'rain' in m.weather|lower %}<i class="fa-solid fa-cloud-rain" style="color: lightblue;"></i>
+                  {% else %}<i class="fa-solid fa-cloud"></i>{% endif %}
+                  {{ m.weather }}
+                </div>
+                <span class="mapping-pill">{{ m.language }}</span>
+              </div>
+              <div class="mapping-copy">
+                <i class="fa-brands fa-spotify"></i> {{ m.playlist_id[:15] }}...
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="card insights-card">
+          <div class="card-header" style="margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
+              <i class="fa-solid fa-bolt"></i> Quick Insights
+            </div>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Total Requests Today</span>
+            <span class="stat-val">{{ logs|length }}</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Most Popular Mood</span>
+            <span class="stat-val">Sunny</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">API Uptime</span>
+            <span class="stat-val">99.9%</span>
+          </div>
+          <button class="btn-primary"
+            style="background: rgba(0,0,0,0.2); color: #fff; width: 100%; margin-top: 10px;">View Analytics</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- New Mapping Modal -->
+<div id="mappingModal" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 1.2rem;">Add/Update Mapping</h2>
+      <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 1.2rem;"
+        onclick="document.getElementById('mappingModal').style.display='none'"></i>
+    </div>
+
+    <form method="post">
       <div class="form-group">
-        <input
-          name="weather"
-          placeholder="Weather (Clear, Rain, Clouds, Snow, Thunderstorm)"
-          required
-          class="form-input"
-        />
+        <label class="form-label">Weather Condition</label>
+        <select name="weather" class="form-select">
+          <option value="Clear">Clear ☀️</option>
+          <option value="Rain">Rain 🌧️</option>
+          <option value="Clouds">Clouds ☁️</option>
+          <option value="Snow">Snow ❄️</option>
+          <option value="Thunderstorm">Thunderstorm ⚡</option>
+        </select>
       </div>
       <div class="form-group">
-        <input
-          name="language"
-          placeholder="Language (English, Hindi)"
-          required
-          class="form-input"
-        />
+        <label class="form-label">Language Context</label>
+        <select name="language" class="form-select">
+          <option value="English">English</option>
+          <option value="Hindi">Hindi</option>
+        </select>
       </div>
       <div class="form-group">
-        <input
-          name="playlist_id"
-          placeholder="Spotify Playlist ID"
-          required
-          class="form-input"
-        />
+        <label class="form-label">Spotify Playlist ID</label>
+        <input name="playlist_id" placeholder="e.g. 37i9dQZF1DXcBWIGoYBM5M" required class="form-input">
       </div>
-      <button type="submit" class="btn-primary">Save Mapping</button>
+
+      <button type="submit" class="btn-success" style="width: 100%;">Save Weather Mapping</button>
     </form>
-  </div>
-
-  <!-- Mappings Section -->
-  <div class="admin-section">
-    <div class="section-header">
-      <h2>🎵 Weather-Playlist Mappings</h2>
-      <span class="mapping-count">{{ mappings|length }} mappings</span>
-    </div>
-    <div class="table-wrapper">
-      <table class="admin-table mappings-table">
-        <thead>
-          <tr>
-            <th>Weather</th>
-            <th>Language</th>
-            <th>Playlist ID</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for m in mappings %}
-          <tr>
-            <td class="weather-type">{{ m.weather }}</td>
-            <td class="language-type">{{ m.language }}</td>
-            <td class="playlist-id-cell">{{ m.playlist_id }}</td>
-            <td>
-              <button
-                class="admin-delete-mapping btn-delete"
-                data-id="{{ m.id }}"
-                title="Delete mapping"
-              >
-                ×
-              </button>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Recent Searches Section -->
-  <div class="admin-section">
-    <div class="section-header">
-      <h2>📊 Recent Searches</h2>
-      <span class="log-count">{{ logs|length }} searches</span>
-    </div>
-    <div class="table-wrapper">
-      <table class="admin-table logs-table">
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>City</th>
-            <th>Weather</th>
-            <th>Playlist ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for l in logs %}
-          <tr>
-            <td class="timestamp">
-              {{ l.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
-            </td>
-            <td class="city-name">{{ l.city }}</td>
-            <td class="weather-condition">{{ l.weather }}</td>
-            <td class="log-playlist-id">{{ l.playlist_id }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
   </div>
 </div>
 {% endblock %}

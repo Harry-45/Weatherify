@@ -1,49 +1,104 @@
 {% extends "base.html" %}
 {% block content %}
-  <img src="{{ url_for('static', filename='logo.png') }}" class="logo small-logo" alt="Weatherify Logo">
-  <h1>Your Weatherify Playlist</h1>
+<div style="padding: 40px; text-align: center; padding-bottom: 100px;">
 
-  <div class="weather-box">
-    <h2>Weather in {{ weather_data.city }}</h2>
-    <p class="temp">Temperature: {{ weather_data.temperature }}°C</p>
-    <img src="http://openweathermap.org/img/wn/{{ weather_data.icon }}@2x.png" class="weather-icon"><br>
-    <p class="condition">Condition: {{ weather_data.condition }}</p>
-    <p class="vibe">{{ weather_data.vibe }}</p>
+  <div class="weather-pill">
+    <div class="weather-text">
+      <span class="weather-label">CURRENT WEATHER</span>
+      <div class="weather-value">{{ weather_data.city }}, {{ weather_data.condition }}</div>
+    </div>
+    <div class="temp-large">{{ weather_data.temperature }}°C</div>
+    <div class="temp-sub">
+      <img src="http://openweathermap.org/img/wn/{{ weather_data.icon }}.png"
+        style="width: 30px; vertical-align: middle;">
+    </div>
   </div>
 
-  {% if playlist %}
-    <div class="playlist-section">
-      {% if playlist.image %}
-        <img src="{{ playlist.image }}" class="playlist-cover" alt="cover">
-      {% endif %}
-      <h3><a href="{{ playlist.url }}" target="_blank">{{ playlist.name }}</a></h3>
-      <p class="desc">{{ playlist.description }}</p>
+  <h1 class="hero-title vibe-header">{{ weather_data.vibe }}</h1>
 
+  <p class="vibe-desc">
+    We've curated this playlist perfectly to match the {{ weather_data.condition }} skies and
+    vibes in {{ weather_data.city }} today.
+  </p>
+
+  {% if playlist %}
+  <div style="max-width: 800px; margin: 0 auto; text-align: left;">
+    <div class="tracks-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-list-ul" style="color: var(--primary-green);"></i>
+        Your Curated Tracks
+      </div>
+      <div>12 TRACKS • 45 MIN</div>
+    </div>
+
+    <div class="track-list">
       {% if tracks %}
-        <div class="track-list">
-          {% for t in tracks %}
-            <div class="track-card">
-              {% if t.image %}
-                <img src="{{ t.image }}" class="track-cover">
-              {% endif %}
-              <div class="track-info">
-                <p class="track-name">{{ t.name }}</p>
-                <p class="track-artist">{{ t.artist }}</p>
-                {% if t.preview_url %}
-                  <audio controls preload="none">
-                    <source src="{{ t.preview_url }}" type="audio/mpeg">
-                  </audio>
-                {% else %}
-                  <p class="no-preview">No preview available</p>
-                {% endif %}
-              </div>
-            </div>
-          {% endfor %}
+      {% for t in tracks %}
+      <div class="track-row">
+        {% if t.image %}
+        <img src="{{ t.image }}" class="track-img" alt="cover">
+        {% else %}
+        <div class="track-img" style="background: #333;"></div>
+        {% endif %}
+
+        <div class="track-info">
+          <span class="track-title">{{ t.name }}</span>
+          <span class="track-artist">{{ t.artist }}</span>
         </div>
+
+        <div class="track-meta">
+          <span>{{ t.duration }}</span> <!-- Assuming added in backend or default -->
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </div>
+      </div>
+      {% endfor %}
       {% endif %}
     </div>
+
+    <div style="margin-top: 30px; text-align: center;">
+      <a href="{{ playlist.url }}" target="_blank" class="btn-primary"
+        style="display: inline-flex; width: auto; padding: 12px 30px;">
+        Open in Spotify <i class="fa-brands fa-spotify"></i>
+      </a>
+    </div>
+  </div>
   {% else %}
-    <p>No playlist found for this weather and language.</p>
+  <p>No playlist found for this weather/language combination.</p>
+  <a href="{{ url_for('index') }}" class="btn-secondary" style="width: auto; display: inline-flex;">Go Back</a>
   {% endif %}
-  <p style="margin-top:20px"><a href="{{ url_for('index') }}" class="link-btn">Back</a></p>
+
+</div>
+
+<!-- Mock Player Bar -->
+<div class="player-bar">
+  <div class="player-left">
+    {% if tracks and tracks[0] %}
+    <img src="{{ tracks[0].image }}" style="width: 50px; height: 50px; border-radius: 4px;">
+    <div>
+      <div style="font-weight: 600; font-size: 0.9rem;">{{ tracks[0].name }}</div>
+      <div style="font-size: 0.8rem; color: #b3b3b3;">{{ tracks[0].artist }}</div>
+    </div>
+    <i class="fa-regular fa-heart" style="margin-left: 10px; color: #b3b3b3;"></i>
+    {% endif %}
+  </div>
+
+  <div class="player-controls">
+    <div class="control-buttons">
+      <i class="fa-solid fa-shuffle" style="font-size: 1rem;"></i>
+      <i class="fa-solid fa-backward-step"></i>
+      <div class="play-circle"><i class="fa-solid fa-play"></i></div>
+      <i class="fa-solid fa-forward-step"></i>
+      <i class="fa-solid fa-repeat" style="font-size: 1rem;"></i>
+    </div>
+    <div style="width: 100%; display: flex; align-items: center; gap: 10px; font-size: 0.7rem; color: #b3b3b3;">
+      <span>1:24</span>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+      <span>3:42</span>
+    </div>
+  </div>
+
+  <div style="width: 30%;"></div>
+</div>
 {% endblock %}
