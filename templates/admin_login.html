@@ -1,18 +1,29 @@
 {% set hide_nav = true %}
 {% extends "base.html" %}
 {% block content %}
-<div class="main-container">
-  <div class="auth-card">
-    <h2>Admin Login</h2>
+<div class="auth-container">
+  <div class="search-card auth-box" style="border-color: rgba(255, 100, 100, 0.3);">
+    <div style="margin-bottom: 20px;">
+      <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: #ff6b6b;"></i>
+    </div>
+    <h2 style="margin-bottom: 10px; color: #ff6b6b;">Admin Login</h2>
+    <p style="color: var(--text-dim); margin-bottom: 30px;">Restricted Access</p>
 
-    <form id="adminLoginForm" method="post" action="{{ url_for('admin_login') }}">
-      <input name="email" type="email" placeholder="Admin Email" required />
-      <input name="password" type="password" placeholder="Password" required />
-      <button type="submit">Admin Login</button>
+    <form action="{{ url_for('admin_login') }}" method="post">
+      <div class="form-group">
+        <label class="form-label">Admin Email</label>
+        <input type="email" name="email" placeholder="admin@weatherify.com" required class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" placeholder="••••••••" required class="form-input" />
+      </div>
+
+      <button type="submit" class="btn-primary" style="background: #ff6b6b; color: white;">Access Dashboard</button>
     </form>
 
-    <p style="margin-top: 12px">
-      <a href="{{ url_for('login') }}">Back to Login</a>
+    <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-dim);">
+      <a href="{{ url_for('login') }}">Back to User Login</a>
     </p>
   </div>
 </div>
