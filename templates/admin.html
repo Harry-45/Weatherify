@@ -8,21 +8,26 @@
     </div>
 
     <nav>
-      <div class="nav-item active">
+      <a href="{{ url_for('admin', section='dashboard') }}"
+        class="nav-item {{ 'active' if active_section == 'dashboard' else '' }}">
         <i class="fa-solid fa-table-columns"></i> Dashboard
-      </div>
-      <div class="nav-item">
+      </a>
+      <a href="{{ url_for('admin', section='users') }}"
+        class="nav-item {{ 'active' if active_section == 'users' else '' }}">
         <i class="fa-solid fa-users"></i> User Management
-      </div>
-      <div class="nav-item">
+      </a>
+      <a href="{{ url_for('admin', section='mappings') }}"
+        class="nav-item {{ 'active' if active_section == 'mappings' else '' }}">
         <i class="fa-solid fa-map"></i> Weather Mappings
-      </div>
-      <div class="nav-item">
+      </a>
+      <a href="{{ url_for('admin', section='playlists') }}"
+        class="nav-item {{ 'active' if active_section == 'playlists' else '' }}">
         <i class="fa-solid fa-music"></i> Playlists
-      </div>
-      <div class="nav-item">
+      </a>
+      <a href="{{ url_for('admin', section='settings') }}"
+        class="nav-item {{ 'active' if active_section == 'settings' else '' }}">
         <i class="fa-solid fa-gear"></i> Settings
-      </div>
+      </a>
     </nav>
 
     <div style="margin-top: auto;">
@@ -46,20 +51,29 @@
   <!-- Main Content -->
   <main class="main-content">
     <div class="admin-header">
-      <h1 style="font-size: 2rem; font-weight: 700;">Admin Dashboard</h1>
+      <h1 style="font-size: 2rem; font-weight: 700;">
+        {% if active_section == 'dashboard' %}Admin Dashboard{% endif %}
+        {% if active_section == 'users' %}User Management{% endif %}
+        {% if active_section == 'mappings' %}Weather Mappings{% endif %}
+        {% if active_section == 'playlists' %}Playlists & Logs{% endif %}
+        {% if active_section == 'settings' %}Settings{% endif %}
+      </h1>
       <div style="display: flex; gap: 15px;">
         <button class="btn-secondary" style="width: auto; margin:0;" onclick="window.location.reload()"><i
             class="fa-solid fa-rotate-right"></i> Refresh Data</button>
+        {% if active_section == 'mappings' %}
         <button class="btn-success" onclick="document.getElementById('mappingModal').style.display='flex'">+ New
           Mapping</button>
+        {% endif %}
       </div>
     </div>
 
     <!-- Stats and Mappings Grid -->
     <div class="stats-grid">
 
-      <!-- User Management Table -->
-      <div class="card">
+      <!-- User Management Section -->
+      {% if active_section == 'users' or active_section == 'dashboard' %}
+      <div class="card" style="grid-column: span 2;">
         <div class="card-header">
           <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem;">
             <i class="fa-solid fa-users" style="color: var(--primary-green);"></i> User Management
@@ -122,15 +136,21 @@
           </tbody>
         </table>
       </div>
+      {% endif %}
 
-      <!-- Right Column: Mappings & Insights -->
-      <div style="display: flex; flex-direction: column; gap: 20px;">
+      <!-- Mappings & Insights Section -->
+      {% if active_section == 'mappings' or active_section == 'dashboard' %}
+      <div class="mappings-wrapper {{ 'active' if active_section == 'mappings' else '' }}">
         <div class="card">
           <div class="card-header">
             <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
               <i class="fa-solid fa-music" style="color: var(--primary-green);"></i> Active Mappings
               <span class="mapping-pill" style="color: var(--primary-green);">{{ mappings|length }} TOTAL</span>
             </div>
+            {% if active_section == 'mappings' %}
+            <button class="btn-success" style="padding: 5px 15px; font-size: 0.8rem;"
+              onclick="document.getElementById('mappingModal').style.display='flex'">+ New</button>
+            {% endif %}
           </div>
 
           <div style="max-height: 400px; overflow-y: auto;">
@@ -153,6 +173,7 @@
           </div>
         </div>
 
+        {% if active_section == 'dashboard' %}
         <div class="card insights-card">
           <div class="card-header" style="margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
@@ -171,10 +192,55 @@
             <span class="stat-label">API Uptime</span>
             <span class="stat-val">99.9%</span>
           </div>
-          <button class="btn-primary"
-            style="background: rgba(0,0,0,0.2); color: #fff; width: 100%; margin-top: 10px;">View Analytics</button>
+          <a href="{{ url_for('admin', section='playlists') }}" class="btn-primary"
+            style="background: rgba(0,0,0,0.2); color: #fff; width: 100%; margin-top: 10px; text-decoration:none; display:block; text-align:center;">View
+            Analytics</a>
         </div>
+        {% endif %}
       </div>
+      {% endif %}
+
+      <!-- Playlists/Logs Section -->
+      {% if active_section == 'playlists' %}
+      <div class="card" style="grid-column: span 2;">
+        <div class="card-header">
+          <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
+            <i class="fa-solid fa-clock-rotate-left"></i> Recent Search Logs
+          </div>
+        </div>
+        <table class="table-dark">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>City</th>
+              <th>Weather</th>
+              <th>Playlist ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for l in logs %}
+            <tr>
+              <td class="timestamp">
+                {{ l.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+              </td>
+              <td class="city-name">{{ l.city }}</td>
+              <td class="weather-condition">{{ l.weather }}</td>
+              <td class="log-playlist-id">{{ l.playlist_id }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      <!-- Settings Section Placeholder -->
+      {% if active_section == 'settings' %}
+      <div class="card" style="grid-column: span 2; text-align: center; padding: 50px;">
+        <i class="fa-solid fa-gear" style="font-size: 3rem; color: #333; margin-bottom: 20px;"></i>
+        <h2>Settings</h2>
+        <p style="color: #666;">Global application settings will appear here.</p>
+      </div>
+      {% endif %}
 
     </div>
   </main>

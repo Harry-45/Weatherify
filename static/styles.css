@@ -690,3 +690,15 @@ ul {
   /* border: 1px solid rgba(94, 255, 139, 0.25); */
   animation: fadeIn 0.8s ease;
 }
+
+.mappings-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mappings-wrapper.active {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}

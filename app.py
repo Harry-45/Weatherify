@@ -216,11 +216,15 @@ def admin():
         for u in users
     }
 
+    # Determine active section from query param
+    active_section = request.args.get('section', 'dashboard')
+
     return render_template("admin.html",
                            mappings=mappings,
                            logs=logs,
                            users=users,
-                           last_activity=last_activity)
+                           last_activity=last_activity,
+                           active_section=active_section)
 
 
 @app.route("/search_city", methods=["POST"])
@@ -276,10 +280,20 @@ def search_city():
                 "preview_url": t.get("preview_url")
             })
 
+    def get_weather_vibe(cond):
+        cond = cond.lower()
+        if "clear" in cond: return "Sunny day vibes ☀️"
+        if "rain" in cond: return "Rainy jazz afternoon 🌧️"
+        if "cloud" in cond: return "Cozy cloudy beats ☁️"
+        if "snow" in cond: return "Chill winter Lo-Fi ❄️"
+        if "thunder" in cond: return "Stormy intensity ⚡"
+        return "Chill vibes 🎵"
+
     weather_data = {
         "city": data["name"],
-        "temperature": data["main"]["temp"],
+        "temperature": round(data["main"]["temp"], 1),
         "condition": condition,
+        "vibe": get_weather_vibe(condition),
         "icon": data["weather"][0]["icon"],
     }
 
