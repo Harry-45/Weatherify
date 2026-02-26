@@ -1,4 +1,4 @@
-# Weatherify 🌦️🎵
+# Weatherify
 
 Weatherify is a Flask-based web application that connects your current weather conditions with the perfect Spotify playlist. Whether it's a sunny day vibes or cozy cloudy beats, Weatherify ensures your music matches the mood of the sky.
 
